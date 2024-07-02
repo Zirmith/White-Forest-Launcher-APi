@@ -20,33 +20,24 @@ app.get('/', (req, res) => {
 });
 
 // Friends API
+
 app.get('/api/friends', (req, res) => {
     const { username } = req.query;
-    db.all('SELECT friend FROM friends WHERE username = ?', [username], (err, rows) => {
-        if (err) {
-            console.error(err);
-            res.status(500).json({ message: 'Error fetching friends' });
-        } else {
-            res.json(rows.map(row => row.friend));
-        }
-    });
-});
-
-app.post('/api/friends', (req, res) => {
-    const { username, friend } = req.body;
-    if (username && friend) {
-        db.run('INSERT INTO friends (username, friend) VALUES (?, ?)', [username, friend], err => {
+    if (username) {
+        db.all('SELECT friend FROM friends WHERE username = ?', [username], (err, rows) => {
             if (err) {
                 console.error(err);
-                res.status(500).json({ message: 'Error adding friend' });
+                res.status(500).json({ message: 'Error fetching friends' });
             } else {
-                res.status(201).json({ message: 'Friend added successfully' });
+                res.json(rows.map(row => row.friend));
             }
         });
     } else {
-        res.status(400).json({ message: 'Username and friend are required' });
+        res.status(400).json({ message: 'Username is required' });
     }
 });
+
+
 
 app.delete('/api/friends/:username/:friend', (req, res) => {
     const { username, friend } = req.params;
@@ -60,21 +51,71 @@ app.delete('/api/friends/:username/:friend', (req, res) => {
     });
 });
 
+app.get('/api/friend-requests', (req, res) => {
+    const { username } = req.query;
+    if (username) {
+        db.all('SELECT requester FROM friend_requests WHERE username = ?', [username], (err, rows) => {
+            if (err) {
+                console.error(err);
+                res.status(500).json({ message: 'Error fetching friend requests' });
+            } else {
+                res.json(rows.map(row => row.requester));
+            }
+        });
+    } else {
+        res.status(400).json({ message: 'Username is required' });
+    }
+});
+
+
 app.post('/api/friend-requests', (req, res) => {
     const { username, requester } = req.body;
     if (username && requester) {
-        db.run('INSERT INTO friend_requests (username, requester) VALUES (?, ?)', [username, requester], err => {
-            if (err) {
-                console.error(err);
-                res.status(500).json({ message: 'Error sending friend request' });
-            } else {
-                res.status(201).json({ message: 'Friend request sent successfully' });
+        // Check if they are already friends
+        db.get(
+            `SELECT * FROM friends 
+             WHERE (username = ? AND friend = ?) OR (username = ? AND friend = ?)`,
+            [username, requester, requester, username],
+            (err, row) => {
+                if (err) {
+                    console.error(err);
+                    res.status(500).json({ message: 'Error checking friendship status' });
+                } else if (row) {
+                    res.status(400).json({ message: 'You are already friends' });
+                } else {
+                    // Check if a friend request already exists in either direction
+                    db.get(
+                        `SELECT * FROM friend_requests 
+                         WHERE (username = ? AND requester = ?) OR (username = ? AND requester = ?)`,
+                        [username, requester, requester, username],
+                        (err, row) => {
+                            if (err) {
+                                console.error(err);
+                                res.status(500).json({ message: 'Error checking for duplicate friend requests' });
+                            } else if (row) {
+                                res.status(400).json({ message: 'Friend request already exists' });
+                            } else {
+                                // Insert the new friend request
+                                db.run('INSERT INTO friend_requests (username, requester) VALUES (?, ?)', [username, requester], err => {
+                                    if (err) {
+                                        console.error(err);
+                                        res.status(500).json({ message: 'Error sending friend request' });
+                                    } else {
+                                        res.status(201).json({ message: 'Friend request sent successfully' });
+                                    }
+                                });
+                            }
+                        }
+                    );
+                }
             }
-        });
+        );
     } else {
         res.status(400).json({ message: 'Username and requester are required' });
     }
 });
+
+
 
 app.post('/api/friend-requests/accept', (req, res) => {
     const { username, requester } = req.body;

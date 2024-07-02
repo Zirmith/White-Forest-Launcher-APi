@@ -5,10 +5,12 @@
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
+    "getmac": "^6.6.0",
     "morgan": "^1.10.0",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
+    "sqlite3": "^5.1.7",
     "winston": "^3.13.0"
   },
   "scripts": {
@@ -28,5 +30,8 @@
   "bugs": {
     "url": "https://github.com/Zirmith/White-Forest-Launcher-APi/issues"
   },
-  "homepage": "https://github.com/Zirmith/White-Forest-Launcher-APi#readme"
+  "homepage": "https://github.com/Zirmith/White-Forest-Launcher-APi#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
 }

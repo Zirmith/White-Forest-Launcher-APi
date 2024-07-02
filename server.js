@@ -70,6 +70,13 @@ app.get('/api/friend-requests', (req, res) => {
 
 app.post('/api/friend-requests', (req, res) => {
     const { username, requester } = req.body;
+
+    if (!username || !requester) {
+        return res.status(400).json({ message: 'Username and requester are required' });
+    }
+    if (username === requester) {
+        return res.status(400).json({ message: 'You cannot send a friend request to yourself' });
+    }
     if (username && requester) {
         // Check if they are already friends
         db.get(

@@ -268,6 +268,17 @@ app.get('/api/online-users', (req, res) => {
     });
 });
 
+// Route to get version manifest JSON
+app.get('/api/version-manifest', async (req, res) => {
+    try {
+        const response = await axios.get('https://launchermeta.mojang.com/mc/game/version_manifest.json');
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error fetching version manifest' });
+    }
+});
+
 // Start the server
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

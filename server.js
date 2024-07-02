@@ -60,16 +60,20 @@ app.delete('/api/friends/:username/:friend', (req, res) => {
     });
 });
 
-app.get('/api/friend-requests', (req, res) => {
-    const { username } = req.query;
-    db.all('SELECT requester FROM friend_requests WHERE username = ?', [username], (err, rows) => {
-        if (err) {
-            console.error(err);
-            res.status(500).json({ message: 'Error fetching friend requests' });
-        } else {
-            res.json(rows.map(row => row.requester));
-        }
-    });
+app.post('/api/friend-requests', (req, res) => {
+    const { username, requester } = req.body;
+    if (username && requester) {
+        db.run('INSERT INTO friend_requests (username, requester) VALUES (?, ?)', [username, requester], err => {
+            if (err) {
+                console.error(err);
+                res.status(500).json({ message: 'Error sending friend request' });
+            } else {
+                res.status(201).json({ message: 'Friend request sent successfully' });
+            }
+        });
+    } else {
+        res.status(400).json({ message: 'Username and requester are required' });
+    }
 });
 
 app.post('/api/friend-requests/accept', (req, res) => {

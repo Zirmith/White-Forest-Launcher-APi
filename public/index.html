@@ -47,12 +47,12 @@
                         while (onlineUsersList.firstChild) {
                             onlineUsersList.removeChild(onlineUsersList.firstChild);
                         }
-
-                        data.users.forEach(username => {
+                        data.users.forEach(info => {
                             const listItem = document.createElement('li');
                             listItem.classList.add('user');
+                            const { username } = info
                             const avatar = document.createElement('img');
-                            avatar.src = `https://minotar.net/avatar/${username}/32`;
+                            avatar.src =  `https://minotar.net/avatar/${username}/32`;
                             avatar.alt = `${username}'s avatar`;
                             avatar.classList.add('avatar');
                             const name = document.createElement('span');

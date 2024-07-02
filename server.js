@@ -153,28 +153,25 @@ app.delete('/api/minecraft-accounts/:username', (req, res) => {
 
 // User Online/Offline API
 
+
 app.post('/api/user-online', (req, res) => {
     const { username } = req.body;
     if (username) {
-        getmac.default((err, macAddress) => {
+        const hwid = getmac.default();
+
+        db.run('INSERT OR IGNORE INTO users (username, hwid) VALUES (?, ?)', [username, hwid], err => {
             if (err) {
-                console.error('Error getting MAC address:', err);
+                console.error(err);
                 res.status(500).json({ message: 'Error marking user as online' });
             } else {
-                db.run('INSERT OR IGNORE INTO users (username, hwid) VALUES (?, ?)', [username, macAddress], err => {
-                    if (err) {
-                        console.error(err);
-                        res.status(500).json({ message: 'Error marking user as online' });
-                    } else {
-                        res.status(201).json({ message: 'User marked as online', hwid: macAddress });
-                    }
-                });
+                res.status(201).json({ message: 'User marked as online', hwid: hwid });
             }
         });
     } else {
         res.status(400).json({ message: 'Username is required' });
     }
 });
+
 
 
 app.post('/api/user-offline', (req, res) => {

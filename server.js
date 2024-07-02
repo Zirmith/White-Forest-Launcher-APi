@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const axios = require('axios');
-const getmac = require('getmac').default;
+const getmac = require('getmac');
 const db = require('./database');
 
 const app = express();
@@ -152,10 +152,11 @@ app.delete('/api/minecraft-accounts/:username', (req, res) => {
 });
 
 // User Online/Offline API
+
 app.post('/api/user-online', (req, res) => {
     const { username } = req.body;
     if (username) {
-        getmac((err, macAddress) => {
+        getmac.default((err, macAddress) => {
             if (err) {
                 console.error('Error getting MAC address:', err);
                 res.status(500).json({ message: 'Error marking user as online' });
@@ -174,6 +175,7 @@ app.post('/api/user-online', (req, res) => {
         res.status(400).json({ message: 'Username is required' });
     }
 });
+
 
 app.post('/api/user-offline', (req, res) => {
     const { username } = req.body;

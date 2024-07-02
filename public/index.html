@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>White Forest Launcher API</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>White Forest Launcher API</h1>
+    <div class="infront-page">
+        <div class="server-status">
+            <span class="status-label">Server Status:</span>
+            <span id="status-indicator" class="status-indicator offline"></span>
+            <span id="status-text">Offline</span>
+        </div>
+        <div class="user-count">
+            <span class="user-count-label">Users Connected:</span>
+            <span id="user-count">0</span>
+        </div>
+        <div class="online-users">
+            <h2>Online Users</h2>
+            <ul id="online-users-list"></ul>
+        </div>
+        <!-- Add additional API documentation and testing tools here -->
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script>
+        function checkServerStatus() {
+            setTimeout(() => {
+                const statusIndicator = document.getElementById('status-indicator');
+                const statusText = document.getElementById('status-text');
+                const userCount = document.getElementById('user-count');
+                const onlineUsersList = document.getElementById('online-users-list');
+
+                statusIndicator.classList.remove('offline');
+                statusIndicator.classList.add('online');
+                statusText.textContent = 'Online';
+
+                fetch('/api/online-users')
+                    .then(response => response.json())
+                    .then(data => {
+                        userCount.textContent = data.count;
+
+                        // Clear the list before adding new users
+                        while (onlineUsersList.firstChild) {
+                            onlineUsersList.removeChild(onlineUsersList.firstChild);
+                        }
+
+                        data.users.forEach(username => {
+                            const listItem = document.createElement('li');
+                            listItem.classList.add('user');
+                            const avatar = document.createElement('img');
+                            avatar.src = `https://minotar.net/avatar/${username}/32`;
+                            avatar.alt = `${username}'s avatar`;
+                            avatar.classList.add('avatar');
+                            const name = document.createElement('span');
+                            name.classList.add('username');
+                            name.textContent = username;
+                            listItem.appendChild(avatar);
+                            listItem.appendChild(name);
+                            onlineUsersList.appendChild(listItem);
+                        });
+
+                        // Animate the online users list
+                        anime({
+                            targets: '#online-users-list li',
+                            opacity: [0, 1],
+                            translateY: [20, 0],
+                            delay: anime.stagger(100) // Staggering delay
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user count and online users:', error);
+                    });
+            }, 2000);
+        }
+
+        setInterval(() => {
+            checkServerStatus();
+        }, 4000);
+    </script>
+</body>
+</html>

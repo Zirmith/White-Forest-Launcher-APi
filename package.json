@@ -1,9 +1,32 @@
 {
   "dependencies": {
     "axios": "^1.7.2",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.19.2",
+    "express-session": "^1.18.0",
     "morgan": "^1.10.0",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "path": "^0.12.7",
     "winston": "^3.13.0"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "white-forest-launcher-api",
+  "description": "Api, used for White Forest Minecraft Launcher",
+  "version": "1.0.0",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zirmith/White-Forest-Launcher-APi.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Zirmith/White-Forest-Launcher-APi/issues"
+  },
+  "homepage": "https://github.com/Zirmith/White-Forest-Launcher-APi#readme"
 }

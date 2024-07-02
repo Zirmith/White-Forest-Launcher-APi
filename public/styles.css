@@ -1,0 +1,92 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #2c3e50;
+    background-image: url(./Backgrounds/p5p6Vs3a09dLO.webp);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    color: #ecf0f1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+h1 {
+    font-size: 2em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.infront-page {
+    position: absolute;
+    width: 100%; /* Full width */
+    height: 100%; /* Adjust for the topbar height */
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 20px;
+    box-sizing: border-box;
+    opacity: 0.85;
+    overflow-y: auto; /* Enable scrolling if content exceeds height */
+    z-index: 99; /* Ensure settings page is above other content */
+    display: block; /* Hidden by default */
+}
+
+.server-status, .user-count {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.status-label, .user-count-label {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
+    background-color: red; /* Default to offline */
+}
+
+.status-indicator.online {
+    background-color: green;
+}
+
+.status-indicator.offline {
+    background-color: red;
+}
+
+#status-text, #user-count {
+    font-weight: bold;
+}
+
+
+.online-users h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.online-users ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.online-users li.user {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.online-users li.user img {
+    margin-right: 10px;
+    border-radius: 50%;
+}
+
+.online-users li.user .username {
+    font-size: 1.2em;
+}

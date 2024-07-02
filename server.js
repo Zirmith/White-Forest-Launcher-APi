@@ -109,6 +109,27 @@ app.post('/api/user-offline', (req, res) => {
     }
 });
 
+app.get('/api/user/avatar', async (req, res) => {
+    const { username } = req.query;
+    if (username) {
+        try {
+            const avatarUrl = `https://minotar.net/avatar/${username}/32`;
+            const response = await axios.get(avatarUrl, { responseType: 'arraybuffer' });
+
+            if (response.status === 200) {
+                // Send the avatar image data back as a response
+                res.status(200).set('Content-Type', 'image/png').send(response.data);
+            } else {
+                res.status(404).json({ message: 'Avatar not found' });
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Error fetching avatar' });
+        }
+    } else {
+        res.status(400).json({ message: 'Username is required' });
+    }
+});
 // Get total number of online users
 app.get('/api/online-users', (req, res) => {
     res.json({ count: onlineUsers.length, users: onlineUsers });

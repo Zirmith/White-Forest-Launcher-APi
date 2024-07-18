@@ -19,6 +19,38 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+
+// Route to get the latest release and download based on OS
+app.get('/download-latest-release', async (req, res) => {
+    try {
+        const response = await axios.get('https://api.github.com/repos/Zirmith/White-Forest-Launcher-APi/releases/latest');
+        const latestRelease = response.data;
+
+        const platform = os.platform();
+        let assetUrl = '';
+
+        // Detect the OS and find the corresponding asset URL
+        latestRelease.assets.forEach(asset => {
+            if (platform === 'win32' && asset.name.includes('windows')) {
+                assetUrl = asset.browser_download_url;
+            } else if (platform === 'darwin' && asset.name.includes('macos')) {
+                assetUrl = asset.browser_download_url;
+            } else if (platform === 'linux' && asset.name.includes('linux')) {
+                assetUrl = asset.browser_download_url;
+            }
+        });
+
+        if (assetUrl) {
+            res.redirect(assetUrl);
+        } else {
+            res.status(404).json({ message: 'No suitable release found for your OS' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error fetching the latest release' });
+    }
+});
+
 // Friends API
 
 app.get('/api/friends', (req, res) => {
@@ -37,6 +69,26 @@ app.get('/api/friends', (req, res) => {
     }
 });
 
+app.get('/launch-app', (req, res) => {
+    const customUrl = 'wf-launcher://open';
+    res.redirect(customUrl);
+});
+
+// Route to launch a specific Minecraft version
+app.get('/launch-minecraft', (req, res) => {
+    const { version, type } = req.query;
+
+    if (!version || !type) {
+        return res.status(400).json({ message: 'Version and type are required' });
+    }
+
+    if (type !== 'release' && type !== 'snapshot') {
+        return res.status(400).json({ message: 'Type must be either release or snapshot' });
+    }
+
+    const customUrl = `wf-launcher://run?version=${version}&type=${type}`;
+    res.redirect(customUrl);
+});
 
 
 app.delete('/api/friends/:username/:friend', (req, res) => {
